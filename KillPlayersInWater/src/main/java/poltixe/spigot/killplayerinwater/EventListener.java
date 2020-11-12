@@ -166,34 +166,49 @@ public class EventListener implements Listener {
 		    if(blockLocation <= player.getLocation().getY()){
 			//Sets a temporary variable to check if a player is in the global PlayerState array
 			boolean playerInStateArray = false;
-                
+
+			//Loops through all known PlayerStates
 			for(PlayerState state : app.playerStates) {
+			    //Checks if the player name is equivaelent to the player state we are currently looping over
 			    if(state.playerName.equals(player.getName())) {
+				//Sets the variable saying that the player is in the player state array to true
 				playerInStateArray = true;
+				//Sets the current working PlayerState to the current playerstate we are iterating over
 				playerState = state;
 			    }
 			}
-    
+
+			//Checks if the player is not in the PlayerState array
 			if(!playerInStateArray) {
+			    //Creates a new PlayerState with the users name and adds it to the array
 			    app.playerStates.add(new PlayerState(player.getName(), -1));
-			    //playerState = new PlayerState(e.getPlayer().getName(), -1);
-    
+
+			    //Loops through all known PlayerStates
 			    for(PlayerState state : app.playerStates) {
+				//Checks if the player name is equal to the name in the PlayerState we are currently iterating on
 				if(state.playerName.equals(player.getName())) {
+				    //Sets the global working PlayerState to the PlayerState we are currently working on
 				    playerState = state;
 				}
 			    }
 			}
-    
+
+			//Checks if the PlayerStates check ID is -1, indicating that the player currently has no loops running on them
 			if(playerState.checkId == -1) {
+			    //Creates a new repeating task, and sets the PlayerStates check ID to the ID passed by the scheduleSyncRepeatingTask
 			    playerState.checkId = app.getServer().getScheduler().scheduleSyncRepeatingTask(app, new Runnable() {
 				    public void run() {
+					//Gets the y position of the highest block above the player
 					int blockLocation = player.getLocation().getWorld().getHighestBlockYAt(player.getLocation());
-	    
+
+					//Checks if the players locaiton is above the blocks location
 					if(blockLocation <= player.getLocation().getY()){
+					    //Damage the player the amount specified in the config
 					    player.damage(app.config.getInt("rainDamageAmount"));
 					} else {
+					    //Cancels the task
 					    app.getServer().getScheduler().cancelTask(playerState.checkId);
+					    //Sets the ID to -1, the ID for no current task running
 					    playerState.checkId = -1;
 					}
 				    }

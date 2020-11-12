@@ -42,41 +42,61 @@ public class EventListener implements Listener {
 	if (e.toWeatherState()) {
 	    //Loops through all online players
 	    for(Player player : Bukkit.getOnlinePlayers()) {
+		//Gets all players that are supposed to be killed
 		ArrayList<String> peopleToKill = (ArrayList<String>) app.config.getStringList("peopleToKill");
 
+		//Checks if the player that is we are looping on is supposed to be killed
 		if(peopleToKill.contains(player.getName())) {
+		    //Gets the y position of the highest block above the player
 		    int blockLocation = player.getLocation().getWorld().getHighestBlockYAt(player.getLocation());
-	    
+
+		    //Checks if the players location is above the highest block on their location
 		    if(blockLocation <= player.getLocation().getY()){
+			//Creates a temporary variable to tell if the player is already in the player state array
 			boolean playerInStateArray = false;
-                
+
+			//Loops through all PlayerStates in the global PlayerState array
 			for(PlayerState state : app.playerStates) {
+			    //Checks if the player we are iterating on has the same name as the name on the state that we are currently iterating on
 			    if(state.playerName.equals(player.getName())) {
+				//Sets the variable saying that the person is on the PlayerState array
 				playerInStateArray = true;
+				//Sets the working player state to the state we are currently iterating on
 				playerState = state;
 			    }
 			}
-    
+
+			//Runs if the player is not in the PlayerState array
 			if(!playerInStateArray) {
+			    //Creates a PlayerState with the players name
 			    app.playerStates.add(new PlayerState(player.getName(), -1));
-			    //playerState = new PlayerState(e.getPlayer().getName(), -1);
-    
+
+			    //Loops through all player states
 			    for(PlayerState state : app.playerStates) {
+				//Checks if the name in the player state is equal to the name of player we are currently iterating on
 				if(state.playerName.equals(player.getName())) {
+				    //Sets the working PlayerState to the state we are iterating on
 				    playerState = state;
 				}
 			    }
 			}
-    
+
+			//Checks if the players check ID was -1, indicating that there is no check currently running
 			if(playerState.checkId == -1) {
+			    //Creates a new repeating task and sets the working PlayerStates ID to the task ID passed by scheduleSyncRepeatingTask
 			    playerState.checkId = app.getServer().getScheduler().scheduleSyncRepeatingTask(app, new Runnable() {
 				    public void run() {
+					//Gets the highest block at the players current location
 					int blockLocation = player.getLocation().getWorld().getHighestBlockYAt(player.getLocation());
-	    
+					
+					//Checks if the player is above that blocks location
 					if(blockLocation <= player.getLocation().getY()){
+					    //Damages the player with the specified amount in the config
 					    player.damage(app.config.getInt("rainDamageAmount"));
 					} else {
+					    //Cancels the task
 					    app.getServer().getScheduler().cancelTask(playerState.checkId);
+					    //Sets the working PlayerState to -1, indicating that no task is running
 					    playerState.checkId = -1;
 					}
 				    }

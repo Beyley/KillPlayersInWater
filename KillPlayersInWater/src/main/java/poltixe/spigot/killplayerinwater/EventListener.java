@@ -90,43 +90,61 @@ public class EventListener implements Listener {
     
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
+	//Get a list of all people that need to be killed
+	ArrayList<String> peopleToKill = (ArrayList<String>) app.config.getStringList("peopleToKill");
+
+	//Gets the block the player is standing on
         Material m = e.getPlayer().getLocation().getBlock().getType();
 
+	//Checks if the block the player is standing on is water
         if (m == Material.WATER) {
-            ArrayList<String> peopleToKill = (ArrayList<String>) app.config.getStringList("peopleToKill");
-    
+	    //Checks if the list of people to kill contains the person that moved
             if (peopleToKill.contains(e.getPlayer().getName())) {
-                //Bukkit.broadcastMessage(e.getPlayer() + " is in water and on *the list*!");
-    
+		//Creates a temporary variable to tell if the player is in the known state array already
                 boolean playerInStateArray = false;
-                
+
+		//Loops through all player states
                 for(PlayerState state : app.playerStates) {
+		    //Checks if the current player state we are looping has the same name as the player that moved
                     if(state.playerName.equals(e.getPlayer().getName())) {
+			//Sets a variable sayint that the player is in the state array
                         playerInStateArray = true;
+			//Sets the global working playerState to the current state we are iterating on
                         playerState = state;
                     }
                 }
-    
+
+		//Checks if the player is not in the player state array
                 if(!playerInStateArray) {
+		    //Creates a new PlayerState with the username and adds it to the PlayerState array
                     app.playerStates.add(new PlayerState(e.getPlayer().getName(), -1));
-                    //playerState = new PlayerState(e.getPlayer().getName(), -1);
-    
+
+		    //Loops through all the known PlayerStates
                     for(PlayerState state : app.playerStates) {
+			//Checks if the player state we are iterating on has the same name as the player that moved
                         if(state.playerName.equals(e.getPlayer().getName())) {
+			    //Sets the global working PlayerState to the state we are currently iterating on
                             playerState = state;
                         }
                     }
                 }
-    
+
+		//Checks if the players looping ID is -1, indicating that there is no loop currently happening
                 if(playerState.checkId == -1) {
+		    //Creates a new repeating task and sets the task ID of the playerState to the new repeating tasks ID
                     playerState.checkId = app.getServer().getScheduler().scheduleSyncRepeatingTask(app, new Runnable() {
                         public void run() {
+			    //Gets the material they are standing on
                             Material m = e.getPlayer().getLocation().getBlock().getType();
 
+			    //Checks if that material is water
                             if (m == Material.WATER) {
+				//Damages the player the amount specified in the config
                                 e.getPlayer().damage(app.config.getInt("waterDamageAmount"));
                             } else {
+				//Cancells the task
                                 app.getServer().getScheduler().cancelTask(playerState.checkId);
+				//Resets the task ID
                             	playerState.checkId = -1;
 			    }
                         }
@@ -135,15 +153,18 @@ public class EventListener implements Listener {
             }
         }
 
+	//Checks if it is currently raining or snowing
 	if (e.getPlayer().getWorld().hasStorm()) {
 	    //Loops through all online players
 	    for(Player player : Bukkit.getOnlinePlayers()) {
-		ArrayList<String> peopleToKill = (ArrayList<String>) app.config.getStringList("peopleToKill");
-
+		//Checks if the player that moved is in the array of people that should be damaged
 		if(peopleToKill.contains(player.getName())) {
+		    //Gets the highest Y position corrosponding to a block above them
 		    int blockLocation = player.getLocation().getWorld().getHighestBlockYAt(player.getLocation());
-	    
+
+		    //Checks if the block location is lower then the players location
 		    if(blockLocation <= player.getLocation().getY()){
+			//Sets a temporary variable to check if a player is in the global PlayerState array
 			boolean playerInStateArray = false;
                 
 			for(PlayerState state : app.playerStates) {

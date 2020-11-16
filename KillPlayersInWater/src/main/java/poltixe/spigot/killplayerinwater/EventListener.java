@@ -88,6 +88,7 @@ public class EventListener implements Listener {
 											// Checks if the player is above that blocks location
 											if (blockLocation <= player.getLocation().getY()) {
 												// Damages the player with the specified amount in the config
+												Bukkit.broadcastMessage(player.getName() + " is in the rain!");
 												player.damage(app.config.getInt("rainDamageAmount"));
 											} else {
 												// Cancels the task
@@ -164,6 +165,7 @@ public class EventListener implements Listener {
 							// Checks if that material is water
 							if (m == Material.WATER) {
 								// Damages the player the amount specified in the config
+								Bukkit.broadcastMessage(e.getPlayer().getName() + " is in the water!");
 								e.getPlayer().damage(app.config.getInt("waterDamageAmount"));
 							} else {
 								// Cancells the task
@@ -238,6 +240,7 @@ public class EventListener implements Listener {
 											// Checks if the players locaiton is above the blocks location
 											if (blockLocation <= player.getLocation().getY()) {
 												// Damage the player the amount specified in the config
+												Bukkit.broadcastMessage(player.getName() + " is in the rain!");
 												player.damage(app.config.getInt("rainDamageAmount"));
 											} else {
 												// Cancels the task

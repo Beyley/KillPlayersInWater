@@ -238,7 +238,8 @@ public class EventListener implements Listener {
 													.getHighestBlockYAt(player.getLocation());
 
 											// Checks if the players locaiton is above the blocks location
-											if (blockLocation <= player.getLocation().getY()) {
+											if (blockLocation <= player.getLocation().getY()
+													&& e.getPlayer().getWorld().hasStorm()) {
 												// Damage the player the amount specified in the config
 												Bukkit.broadcastMessage(player.getName() + " is in the rain!");
 												player.damage(app.config.getInt("rainDamageAmount"));

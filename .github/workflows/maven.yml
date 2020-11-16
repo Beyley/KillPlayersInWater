@@ -22,3 +22,14 @@ jobs:
         java-version: 1.8
     - name: Build with Maven
       run: mvn -B install --file KillPlayersInWater/pom.xml
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-without-markdown
+        path: |
+          KillPlayersInWater/target
+          !target/classes/
+          !target/generated-sources/
+          !target/maven-archiver/
+          !target/maven-status/
+          !target/test-classes/

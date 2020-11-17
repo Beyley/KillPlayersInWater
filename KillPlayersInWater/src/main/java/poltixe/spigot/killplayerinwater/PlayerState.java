@@ -72,7 +72,7 @@ public class PlayerState {
             Material m = this.player.getLocation().getBlock().getType();
 
             // Checks if the block the player is standing on is water
-            if (m == Material.WATER) {
+            if (m == Material.WATER || m == Material.BUBBLE_COLUMN) {
                 // Checks if the players looping ID is -1, indicating that there is no loop
                 // currently happening
                 if (this.checkId == -1) {

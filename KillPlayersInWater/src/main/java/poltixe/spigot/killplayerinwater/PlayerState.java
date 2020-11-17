@@ -65,9 +65,9 @@ public class PlayerState {
         ArrayList<String> peopleToKill = (ArrayList<String>) app.config.getStringList("peopleToKill");
 
         // Checks if the list of people to kill contains the person
-        if (peopleToKill.contains(player.getName())) {
+        if (peopleToKill.contains(this.player.getName())) {
             // Gets the block the player is standing on
-            Material m = player.getLocation().getBlock().getType();
+            Material m = this.player.getLocation().getBlock().getType();
 
             // Checks if the block the player is standing on is water
             if (m == Material.WATER) {
@@ -98,42 +98,37 @@ public class PlayerState {
             }
 
             // Checks if it is currently raining or snowing
-            if (player.getWorld().hasStorm()) {
-                // Loops through all online players
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    // Gets the highest Y position corrosponding to a block above them
-                    int blockLocation = player.getLocation().getWorld().getHighestBlockYAt(player.getLocation());
+            if (this.player.getWorld().hasStorm()) {
+                // Gets the highest Y position corrosponding to a block above them
+                int blockLocation = this.player.getLocation().getWorld().getHighestBlockYAt(player.getLocation());
 
-                    // Checks if the block location is lower then the players location
-                    if (blockLocation <= player.getLocation().getY()) {
-                        // Checks if the PlayerStates check ID is -1, indicating that the player
-                        // currently has no loops running on them
-                        if (this.checkId == -1) {
-                            // Creates a new repeating task, and sets the PlayerStates check ID to the ID
-                            // passed by the scheduleSyncRepeatingTask
-                            this.checkId = app.getServer().getScheduler().scheduleSyncRepeatingTask(app,
-                                    new Runnable() {
+                // Checks if the block location is lower then the players location
+                if (blockLocation <= this.player.getLocation().getY()) {
+                    // Checks if the PlayerStates check ID is -1, indicating that the player
+                    // currently has no loops running on them
+                    if (this.checkId == -1) {
+                        // Creates a new repeating task, and sets the PlayerStates check ID to the ID
+                        // passed by the scheduleSyncRepeatingTask
+                        this.checkId = app.getServer().getScheduler().scheduleSyncRepeatingTask(app, new Runnable() {
 
-                                        public void run() {
-                                            // Gets the y position of the highest block above the player
-                                            int blockLocation = player.getLocation().getWorld()
-                                                    .getHighestBlockYAt(player.getLocation());
+                            public void run() {
+                                // Gets the y position of the highest block above the player
+                                int blockLocation = player.getLocation().getWorld()
+                                        .getHighestBlockYAt(player.getLocation());
 
-                                            // Checks if the players locaiton is above the blocks location
-                                            if (blockLocation <= player.getLocation().getY()
-                                                    && player.getWorld().hasStorm()) {
-                                                // Damage the player the amount specified in the config
-                                                // Bukkit.broadcastMessage(player.getName() + " is in the rain!");
-                                                player.damage(app.config.getInt("rainDamageAmount"));
-                                            } else {
-                                                // Cancels the task
-                                                app.getServer().getScheduler().cancelTask(checkId);
-                                                // Sets the ID to -1, the ID for no current task running
-                                                checkId = -1;
-                                            }
-                                        }
-                                    }, 0, 10);
-                        }
+                                // Checks if the players locaiton is above the blocks location
+                                if (blockLocation <= player.getLocation().getY() && player.getWorld().hasStorm()) {
+                                    // Damage the player the amount specified in the config
+                                    // Bukkit.broadcastMessage(player.getName() + " is in the rain!");
+                                    player.damage(app.config.getInt("rainDamageAmount"));
+                                } else {
+                                    // Cancels the task
+                                    app.getServer().getScheduler().cancelTask(checkId);
+                                    // Sets the ID to -1, the ID for no current task running
+                                    checkId = -1;
+                                }
+                            }
+                        }, 0, 10);
                     }
                 }
             }

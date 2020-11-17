@@ -64,6 +64,8 @@ public class PlayerState {
         // Get a list of all people that need to be killed
         ArrayList<String> peopleToKill = (ArrayList<String>) app.config.getStringList("peopleToKill");
 
+        Bukkit.broadcastMessage(this.checkId + "");
+
         // Checks if the list of people to kill contains the person
         if (peopleToKill.contains(this.player.getName())) {
             // Gets the block the player is standing on

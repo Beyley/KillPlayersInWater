@@ -83,8 +83,8 @@ public class PlayerState {
                             // Gets the material they are standing on
                             Material m = player.getLocation().getBlock().getType();
 
-                            // Checks if that material is water
-                            if (m == Material.WATER) {
+                            // Checks if that material is water or a bubble column
+                            if (m == Material.WATER || m == Material.BUBBLE_COLUMN) {
                                 // Damages the player the amount specified in the config
                                 // Bukkit.broadcastMessage(e.getPlayer().getName() + " is in the water!");
                                 player.damage(app.config.getInt("waterDamageAmount"));

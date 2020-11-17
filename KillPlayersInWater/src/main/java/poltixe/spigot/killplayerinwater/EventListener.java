@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class EventListener implements Listener {
 	@EventHandler
 	public void onWeatherChange(WeatherChangeEvent e) {
-		for (PlayerState state : App.getPlugin(App.class).playerStates) {
-			state.checkPlayerConditions();
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			PlayerState.getPlayerStateFromGlobal(player).checkPlayerConditions();
 		}
 	}
 
